@@ -1,19 +1,15 @@
 // Firebaseコンソール > プロジェクトの設定 > マイアプリ で取得した値をここに貼り付けてください。
 // 詳しい手順は README.md を参照してください。
+//
+// apiKeyはFirebaseの仕様上ブラウザに公開される前提の識別子であり、秘密情報ではありません。
+// アクセス制御はこのファイルではなく、Firebaseコンソールで設定するFirestoreの
+// セキュリティルール（firestore.rules）側でのみ行います。許可するメールアドレスは
+// このリポジトリにはコミットせず、Firebaseコンソールのルール編集画面に直接入力してください。
 export const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId: 'YOUR_APP_ID',
+  apiKey: 'AIzaSyBxSEVSRDWsmfqFLu7VGw2-O37lG86uPQc',
+  authDomain: 'koguma-1cbea.firebaseapp.com',
+  projectId: 'koguma-1cbea',
+  storageBucket: 'koguma-1cbea.firebasestorage.app',
+  messagingSenderId: '101560133133',
+  appId: '1:101560133133:web:a7e2d49faa80827eef5744',
 };
-
-// アクセスを許可する2人のGoogleアカウントのメールアドレス。
-// ここでの制限はUI表示用の簡易チェックです。実際のアクセス制御は
-// Firestoreのセキュリティルール（firestore.rules）側で行われます。
-// 両方のファイルに同じメールアドレスを設定してください。
-export const ALLOWED_EMAILS = [
-  'husband@example.com',
-  'wife@example.com',
-];

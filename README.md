@@ -18,13 +18,15 @@
 
 1. Firebaseコンソールの「Firestore Database」→「ルール」を開く。
 2. このリポジトリの `firestore.rules` の内容を貼り付ける。
-3. `husband@example.com` / `wife@example.com` を、実際に許可したい2つのGoogleアカウントのメールアドレスに書き換えて公開する。
+3. `husband@example.com` / `wife@example.com` の部分だけを、実際に許可したい2つのGoogleアカウントのメールアドレスに**Firebaseコンソール上で直接**書き換えて公開する。
+
+**重要**: 実際のメールアドレスは、このリポジトリの `firestore.rules` ファイル自体には書き込まないでください（GitHub Pagesやリポジトリからメールアドレスがそのまま見える状態になります）。書き換えるのはFirebaseコンソールの画面上だけにしてください。
 
 ### 3. Webアプリを登録し、設定値を取得する
 
 1. Firebaseコンソールの「プロジェクトの設定」→「マイアプリ」→ウェブアプリを追加する。
 2. 表示される `firebaseConfig` の値を、このリポジトリの `firebase-config.js` の `firebaseConfig` にコピーする。
-3. `firebase-config.js` の `ALLOWED_EMAILS` にも、`firestore.rules` と同じ2つのメールアドレスを設定する（こちらはUI表示用の簡易チェックで、実際のアクセス制御はFirestoreルール側が行います）。
+3. `firebaseConfig` の値（`apiKey`を含む）はそのままコミットして問題ありません。Firebaseの仕様上、Web向けの`apiKey`はブラウザに公開される前提の識別子であり秘密情報ではないためです。実際のアクセス制御は常にFirestoreルール側のみで行います。
 
 ### 4. 認証の承認済みドメインを追加する
 
@@ -47,3 +49,5 @@
 ## 注意
 
 - `firebase-config.js` のAPIキーはクライアント側に公開される前提の値です（Firebaseの仕様上問題ありません）。実際のアクセス制御は必ず `firestore.rules` 側で行ってください。
+- 任意ですが、APIキーの不正利用（クォータの無断使用など）を防ぐため、Google Cloud Consoleの「APIとサービス」→「認証情報」で、このAPIキーに対して「HTTPリファラーの制限」（`https://<ユーザー名>.github.io/*` のみ許可）を設定することを推奨します。
+- 許可するメールアドレス自体は、このリポジトリのどのファイルにもコミットしないでください。`firestore.rules`はテンプレートとしてダミーのメールアドレスのままにし、実際の値はFirebaseコンソールのルール編集画面にのみ入力してください。

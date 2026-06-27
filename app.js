@@ -18,7 +18,7 @@ import {
   orderBy,
   serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
-import { firebaseConfig, ALLOWED_EMAILS } from './firebase-config.js';
+import { firebaseConfig } from './firebase-config.js';
 import { PAGES } from './pages-data.js';
 
 const app = initializeApp(firebaseConfig);
@@ -292,28 +292,29 @@ function subscribeToRecords() {
   unsubscribeRecords = onSnapshot(
     q,
     (snapshot) => {
+      appRoot.hidden = false;
+      signedOutCard.hidden = true;
       allRecords = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
       renderRecords();
     },
-    (err) => {
+    async (err) => {
+      if (err.code === 'permission-denied') {
+        alert('このアカウントには利用権限がありません。');
+        await signOut(auth);
+        return;
+      }
       console.error(err);
       alert(`記録の取得に失敗しました: ${err.message}`);
     }
   );
 }
 
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(auth, (user) => {
   currentUser = user;
   renderAuthArea();
 
-  if (user && !ALLOWED_EMAILS.includes(user.email)) {
-    alert('このアカウントには利用権限がありません。');
-    await signOut(auth);
-    return;
-  }
-
   if (user) {
-    appRoot.hidden = false;
+    // 権限があるかどうかはFirestoreへの最初のアクセスで判定する（subscribeToRecords内のonSnapshotエラー参照）。
     signedOutCard.hidden = true;
     subscribeToRecords();
   } else {
