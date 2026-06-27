@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>問題管理</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header>
+  <h1>問題管理</h1>
+  <div id="auth-area" class="auth-area"></div>
+</header>
+
+<main id="app" hidden>
+  <div id="summary" class="summary"></div>
+
+  <section class="card">
+    <h2>記録を追加</h2>
+    <form id="record-form">
+      <input type="hidden" id="record-id" />
+      <div class="form-row">
+        <label for="date">日付</label>
+        <input type="date" id="date" required />
+      </div>
+      <div class="form-row">
+        <label for="page">ページ</label>
+        <select id="page" required></select>
+      </div>
+      <div class="form-row">
+        <label for="total">問題数</label>
+        <input type="number" id="total" min="1" required />
+      </div>
+      <div class="form-row">
+        <label for="correct">正解数</label>
+        <input type="number" id="correct" min="0" required />
+      </div>
+      <div class="form-row form-actions">
+        <button type="submit" id="submit-btn">追加</button>
+        <button type="button" id="cancel-edit" class="secondary" hidden>キャンセル</button>
+      </div>
+      <p id="form-error" class="error"></p>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>解答記録</h2>
+    <div class="form-row">
+      <label for="filter-page">ページで絞り込み</label>
+      <select id="filter-page">
+        <option value="">すべて</option>
+      </select>
+    </div>
+    <table id="records-table">
+      <thead>
+        <tr>
+          <th>日付</th>
+          <th>ページ</th>
+          <th>タイトル</th>
+          <th>正解/問題数</th>
+          <th>正答率</th>
+          <th>記録者</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>ページ別の状況</h2>
+    <table id="pages-table">
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>タイトル</th>
+          <th>挑戦回数</th>
+          <th>最終日</th>
+          <th>正答率</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</main>
+
+<div id="signed-out" class="card signed-out-card">
+  <p>このサービスは家族専用です。許可されたGoogleアカウントでログインしてください。</p>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
