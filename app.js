@@ -35,13 +35,14 @@ const signedOutCard = document.getElementById('signed-out');
 const form = document.getElementById('record-form');
 const recordIdInput = document.getElementById('record-id');
 const dateInput = document.getElementById('date');
-const pageSelect = document.getElementById('page');
+const unitSelect = document.getElementById('unit');
+const pageNumberInput = document.getElementById('page-number');
 const totalInput = document.getElementById('total');
 const correctInput = document.getElementById('correct');
 const submitBtn = document.getElementById('submit-btn');
 const cancelEditBtn = document.getElementById('cancel-edit');
 const formError = document.getElementById('form-error');
-const filterPageSelect = document.getElementById('filter-page');
+const filterUnitSelect = document.getElementById('filter-unit');
 const recordsTableBody = document.querySelector('#records-table tbody');
 const pagesTableBody = document.querySelector('#pages-table tbody');
 const summaryEl = document.getElementById('summary');
@@ -50,10 +51,10 @@ let unsubscribeRecords = null;
 let allRecords = [];
 let currentUser = null;
 
-function populatePageSelects() {
-  for (const select of [pageSelect, filterPageSelect]) {
+function populateUnitSelects() {
+  for (const select of [unitSelect, filterUnitSelect]) {
     const keepValue = select.value;
-    while (select.options.length > (select === filterPageSelect ? 1 : 0)) {
+    while (select.options.length > (select === filterUnitSelect ? 1 : 0)) {
       select.remove(select.options.length - 1);
     }
     for (const page of PAGES) {
@@ -103,7 +104,8 @@ function resetForm() {
 function startEdit(record) {
   recordIdInput.value = record.id;
   dateInput.value = record.date;
-  pageSelect.value = String(record.pageNumber);
+  unitSelect.value = String(record.unitNumber ?? record.pageNumber);
+  pageNumberInput.value = String(record.pageNumber);
   totalInput.value = String(record.totalCount);
   correctInput.value = String(record.correctCount);
   submitBtn.textContent = '更新';
@@ -114,12 +116,16 @@ function startEdit(record) {
 
 function validateForm() {
   const date = dateInput.value;
-  const pageNumber = Number(pageSelect.value);
+  const unitNumber = Number(unitSelect.value);
+  const pageNumber = Number(pageNumberInput.value);
   const totalCount = Number(totalInput.value);
   const correctCount = Number(correctInput.value);
 
   if (!date) return '日付を指定してください。';
-  if (!PAGES_BY_NUMBER.has(pageNumber)) return 'ページを指定してください。';
+  if (!PAGES_BY_NUMBER.has(unitNumber)) return '単元名を指定してください。';
+  if (!Number.isInteger(pageNumber) || pageNumber <= 0) {
+    return 'ページは1以上の整数で指定してください。';
+  }
   if (!Number.isInteger(totalCount) || totalCount <= 0) {
     return '問題数は1以上の整数で指定してください。';
   }
@@ -141,7 +147,8 @@ form.addEventListener('submit', async (e) => {
 
   const payload = {
     date: dateInput.value,
-    pageNumber: Number(pageSelect.value),
+    unitNumber: Number(unitSelect.value),
+    pageNumber: Number(pageNumberInput.value),
     totalCount: Number(totalInput.value),
     correctCount: Number(correctInput.value),
   };
@@ -166,7 +173,14 @@ form.addEventListener('submit', async (e) => {
 
 cancelEditBtn.addEventListener('click', resetForm);
 
-filterPageSelect.addEventListener('change', renderRecords);
+filterUnitSelect.addEventListener('change', renderRecords);
+
+// 単元を選んだとき、ページ欄が空ならその単元の開始ページを初期値として補完する。
+unitSelect.addEventListener('change', () => {
+  if (!pageNumberInput.value) {
+    pageNumberInput.value = unitSelect.value;
+  }
+});
 
 async function deleteRecord(id) {
   if (!confirm('この記録を削除しますか？')) return;
@@ -178,14 +192,15 @@ async function deleteRecord(id) {
 }
 
 function renderRecords() {
-  const filterValue = filterPageSelect.value;
+  const filterValue = filterUnitSelect.value;
   const filtered = filterValue
-    ? allRecords.filter((r) => r.pageNumber === Number(filterValue))
+    ? allRecords.filter((r) => (r.unitNumber ?? r.pageNumber) === Number(filterValue))
     : allRecords;
 
   recordsTableBody.innerHTML = '';
   for (const record of filtered) {
-    const page = PAGES_BY_NUMBER.get(record.pageNumber);
+    const unitNumber = record.unitNumber ?? record.pageNumber;
+    const unit = PAGES_BY_NUMBER.get(unitNumber);
     const accuracy = record.totalCount > 0
       ? Math.round((record.correctCount / record.totalCount) * 1000) / 10
       : null;
@@ -195,11 +210,11 @@ function renderRecords() {
     const tdDate = document.createElement('td');
     tdDate.textContent = record.date;
 
+    const tdUnit = document.createElement('td');
+    tdUnit.textContent = unit ? unit.title : '(不明な単元)';
+
     const tdPage = document.createElement('td');
     tdPage.textContent = record.pageNumber;
-
-    const tdTitle = document.createElement('td');
-    tdTitle.textContent = page ? page.title : '(不明なページ)';
 
     const tdScore = document.createElement('td');
     tdScore.textContent = `${record.correctCount} / ${record.totalCount}`;
@@ -221,18 +236,20 @@ function renderRecords() {
     deleteBtn.addEventListener('click', () => deleteRecord(record.id));
     tdActions.append(editBtn, deleteBtn);
 
-    tr.append(tdDate, tdPage, tdTitle, tdScore, tdAccuracy, tdBy, tdActions);
+    tr.append(tdDate, tdUnit, tdPage, tdScore, tdAccuracy, tdBy, tdActions);
     recordsTableBody.appendChild(tr);
   }
 
-  renderPagesTable();
+  renderUnitsTable();
   renderSummary();
 }
 
-function renderPagesTable() {
+function renderUnitsTable() {
   pagesTableBody.innerHTML = '';
-  for (const page of PAGES) {
-    const records = allRecords.filter((r) => r.pageNumber === page.number);
+  for (const unit of PAGES) {
+    const records = allRecords.filter(
+      (r) => (r.unitNumber ?? r.pageNumber) === unit.number
+    );
     const attemptCount = records.length;
     const lastDate = records.reduce(
       (latest, r) => (!latest || r.date > latest ? r.date : latest),
@@ -246,9 +263,9 @@ function renderPagesTable() {
 
     const tr = document.createElement('tr');
     const tdNumber = document.createElement('td');
-    tdNumber.textContent = page.number;
+    tdNumber.textContent = unit.number;
     const tdTitle = document.createElement('td');
-    tdTitle.textContent = page.title;
+    tdTitle.textContent = unit.title;
     const tdAttempts = document.createElement('td');
     tdAttempts.textContent = attemptCount;
     const tdLastDate = document.createElement('td');
@@ -262,7 +279,9 @@ function renderPagesTable() {
 }
 
 function renderSummary() {
-  const attemptedPages = new Set(allRecords.map((r) => r.pageNumber)).size;
+  const attemptedUnits = new Set(
+    allRecords.map((r) => r.unitNumber ?? r.pageNumber)
+  ).size;
   const attemptCount = allRecords.length;
   const totalCorrect = allRecords.reduce((sum, r) => sum + r.correctCount, 0);
   const totalQuestions = allRecords.reduce((sum, r) => sum + r.totalCount, 0);
@@ -272,7 +291,7 @@ function renderSummary() {
 
   summaryEl.innerHTML = '';
   const items = [
-    `全${PAGES.length}ページ中 ${attemptedPages}ページに挑戦済み`,
+    `全${PAGES.length}単元中 ${attemptedUnits}単元に挑戦済み`,
     `合計挑戦回数: ${attemptCount}回`,
     `全体正答率: ${overallAccuracy === null ? '-' : overallAccuracy + '%'}`,
   ];
@@ -328,5 +347,5 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-populatePageSelects();
+populateUnitSelects();
 resetForm();
