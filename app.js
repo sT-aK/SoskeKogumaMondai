@@ -18,8 +18,8 @@ import {
   orderBy,
   serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
-import { firebaseConfig } from './firebase-config.js';
-import { PAGES } from './pages-data.js';
+import { firebaseConfig } from './firebase-config.js?v=20260627a';
+import { PAGES } from './pages-data.js?v=20260627a';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
