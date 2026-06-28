@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>問題管理</title>
-<link rel="stylesheet" href="style.css?v=20260627a" />
+<link rel="stylesheet" href="style.css?v=20260628a" />
 </head>
 <body>
 <header>
@@ -39,6 +39,10 @@
         <label for="correct">正解数</label>
         <input type="number" id="correct" min="0" required />
       </div>
+      <div class="form-row">
+        <label for="memo">メモ</label>
+        <textarea id="memo" rows="2" placeholder="間違えた問題や気づいたことなど（任意）"></textarea>
+      </div>
       <div class="form-row form-actions">
         <button type="submit" id="submit-btn">追加</button>
         <button type="button" id="cancel-edit" class="secondary" hidden>キャンセル</button>
@@ -63,6 +67,7 @@
           <th>ページ</th>
           <th>正解/問題数</th>
           <th>正答率</th>
+          <th>メモ</th>
           <th>記録者</th>
           <th></th>
         </tr>
@@ -92,6 +97,6 @@
   <p>このサービスは家族専用です。許可されたGoogleアカウントでログインしてください。</p>
 </div>
 
-<script type="module" src="app.js?v=20260627a"></script>
+<script type="module" src="app.js?v=20260628a"></script>
 </body>
 </html>

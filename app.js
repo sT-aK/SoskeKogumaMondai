@@ -18,8 +18,8 @@ import {
   orderBy,
   serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
-import { firebaseConfig } from './firebase-config.js?v=20260627a';
-import { PAGES } from './pages-data.js?v=20260627a';
+import { firebaseConfig } from './firebase-config.js?v=20260628a';
+import { PAGES } from './pages-data.js?v=20260628a';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -39,6 +39,7 @@ const unitSelect = document.getElementById('unit');
 const pageNumberInput = document.getElementById('page-number');
 const totalInput = document.getElementById('total');
 const correctInput = document.getElementById('correct');
+const memoInput = document.getElementById('memo');
 const submitBtn = document.getElementById('submit-btn');
 const cancelEditBtn = document.getElementById('cancel-edit');
 const formError = document.getElementById('form-error');
@@ -108,6 +109,7 @@ function startEdit(record) {
   pageNumberInput.value = String(record.pageNumber);
   totalInput.value = String(record.totalCount);
   correctInput.value = String(record.correctCount);
+  memoInput.value = record.memo ?? '';
   submitBtn.textContent = '更新';
   cancelEditBtn.hidden = false;
   formError.textContent = '';
@@ -151,6 +153,7 @@ form.addEventListener('submit', async (e) => {
     pageNumber: Number(pageNumberInput.value),
     totalCount: Number(totalInput.value),
     correctCount: Number(correctInput.value),
+    memo: memoInput.value.trim(),
   };
 
   try {
@@ -222,6 +225,10 @@ function renderRecords() {
     const tdAccuracy = document.createElement('td');
     tdAccuracy.textContent = accuracy === null ? '-' : `${accuracy}%`;
 
+    const tdMemo = document.createElement('td');
+    tdMemo.className = 'memo-cell';
+    tdMemo.textContent = record.memo || '';
+
     const tdBy = document.createElement('td');
     tdBy.textContent = record.createdByName || '';
 
@@ -236,7 +243,7 @@ function renderRecords() {
     deleteBtn.addEventListener('click', () => deleteRecord(record.id));
     tdActions.append(editBtn, deleteBtn);
 
-    tr.append(tdDate, tdUnit, tdPage, tdScore, tdAccuracy, tdBy, tdActions);
+    tr.append(tdDate, tdUnit, tdPage, tdScore, tdAccuracy, tdMemo, tdBy, tdActions);
     recordsTableBody.appendChild(tr);
   }
 

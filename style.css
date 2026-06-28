@@ -96,7 +96,8 @@ main {
 }
 
 .form-row input,
-.form-row select {
+.form-row select,
+.form-row textarea {
   flex: 1 1 auto;
   min-width: 0;
   max-width: 100%;
@@ -105,6 +106,11 @@ main {
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 0.95rem;
+}
+
+.form-row textarea {
+  resize: vertical;
+  font-family: inherit;
 }
 
 .form-actions {
@@ -160,4 +166,11 @@ th, td {
 
 tbody tr:hover {
   background: #fafbff;
+}
+
+.memo-cell {
+  max-width: 220px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #555;
 }
