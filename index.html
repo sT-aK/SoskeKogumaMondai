@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>問題管理</title>
-<link rel="stylesheet" href="style.css?v=20260707b" />
+<link rel="stylesheet" href="style.css?v=20260707c" />
 </head>
 <body>
 <header>
@@ -55,6 +55,27 @@
       </div>
       <p id="form-error" class="error"></p>
     </form>
+  </section>
+
+  <section class="card">
+    <details class="collapsible">
+      <summary>単元を追加</summary>
+      <p class="section-note">問題集にない単元を追加できます。No.には他の単元と重ならない番号（そのページ番号など）を指定してください。</p>
+      <form id="unit-form">
+        <div class="form-row">
+          <label for="new-unit-number">No.</label>
+          <input type="number" id="new-unit-number" min="1" required />
+        </div>
+        <div class="form-row">
+          <label for="new-unit-title">単元名</label>
+          <input type="text" id="new-unit-title" maxlength="50" required />
+        </div>
+        <div class="form-row form-actions">
+          <button type="submit">単元を追加</button>
+        </div>
+        <p id="unit-form-error" class="error"></p>
+      </form>
+    </details>
   </section>
 
   <section class="card">
@@ -123,6 +144,6 @@
   <p>このサービスは家族専用です。許可されたGoogleアカウントでログインしてください。</p>
 </div>
 
-<script type="module" src="app.js?v=20260707b"></script>
+<script type="module" src="app.js?v=20260707c"></script>
 </body>
 </html>

@@ -194,6 +194,18 @@ tbody tr:hover {
   color: #777;
 }
 
+/* --- 折りたたみセクション（単元を追加など） --- */
+.collapsible summary {
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+
+.collapsible[open] summary {
+  margin-bottom: 12px;
+}
+
 /* --- 絞り込み・期間 --- */
 .filters {
   margin-bottom: 12px;
