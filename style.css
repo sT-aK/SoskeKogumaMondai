@@ -174,3 +174,145 @@ tbody tr:hover {
   word-break: break-word;
   color: #555;
 }
+
+/* --- カード見出し・注記 --- */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.card-header h2 {
+  margin: 0;
+}
+
+.section-note {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* --- 絞り込み・期間 --- */
+.filters {
+  margin-bottom: 12px;
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+}
+
+.date-range input {
+  flex: 0 1 auto;
+  width: auto;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+/* --- 横スクロール対応 --- */
+.table-wrap {
+  overflow-x: auto;
+}
+
+/* --- 並び替え可能なヘッダ --- */
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+th.sortable:hover {
+  color: #2f6fed;
+}
+
+th.sorted {
+  color: #2f6fed;
+}
+
+/* --- 正答率の信号色 --- */
+.acc-good { color: #1a7f37; font-weight: 600; }
+.acc-mid  { color: #b8860b; font-weight: 600; }
+.acc-bad  { color: #d23b3b; font-weight: 600; }
+
+/* --- 単元ステータスのバッジ・行色 --- */
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.status-review   { background: #fdecec; color: #b3261e; }
+.status-untried  { background: #fdf6e3; color: #8a6d0b; }
+.status-progress { background: #eef3ff; color: #2f6fed; }
+.status-mastered { background: #eaf7ee; color: #1a7f37; }
+
+tr.unit-review   { background: #fdf4f4; }
+tr.unit-untried  { background: #fdfbf2; }
+tr.unit-review:hover  { background: #fbeaea; }
+tr.unit-untried:hover { background: #fbf6e4; }
+
+/* --- 復習おすすめ --- */
+.suggest-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.suggest-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  background: #fff;
+  border: 1px solid #e3e3e8;
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #222;
+  text-align: left;
+  cursor: pointer;
+}
+
+.suggest-chip:hover {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.suggest-chip.unit-review   { border-left-color: #d23b3b; }
+.suggest-chip.unit-untried  { border-left-color: #d9a406; }
+.suggest-chip.unit-progress { border-left-color: #2f6fed; }
+.suggest-chip.unit-mastered { border-left-color: #1a7f37; }
+
+.suggest-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.suggest-meta {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+/* --- 正答率の推移グラフ --- */
+.trend-chart {
+  margin-bottom: 12px;
+}
+
+.trend-svg {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+}
+
+.trend-grid { stroke: #eee; stroke-width: 1; }
+.trend-axis { fill: #999; font-size: 11px; }
+.trend-line { fill: none; stroke: #2f6fed; stroke-width: 2; }
+.trend-dot  { fill: #2f6fed; }

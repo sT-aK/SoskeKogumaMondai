@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>問題管理</title>
-<link rel="stylesheet" href="style.css?v=20260628a" />
+<link rel="stylesheet" href="style.css?v=20260706a" />
 </head>
 <body>
 <header>
@@ -14,6 +14,12 @@
 
 <main id="app" hidden>
   <div id="summary" class="summary"></div>
+
+  <section class="card" id="review-suggest" hidden>
+    <h2>復習おすすめ</h2>
+    <p class="section-note">正答率が低い単元・しばらく解いていない単元・まだ挑戦していない単元を優先して表示します。</p>
+    <div id="review-suggest-list" class="suggest-list"></div>
+  </section>
 
   <section class="card">
     <h2>記録を追加</h2>
@@ -52,44 +58,64 @@
   </section>
 
   <section class="card">
-    <h2>解答記録</h2>
-    <div class="form-row">
-      <label for="filter-unit">単元で絞り込み</label>
-      <select id="filter-unit">
-        <option value="">すべて</option>
-      </select>
+    <div class="card-header">
+      <h2>解答記録</h2>
+      <button type="button" id="export-csv" class="secondary">CSVで書き出し</button>
     </div>
-    <table id="records-table">
-      <thead>
-        <tr>
-          <th>日付</th>
-          <th>単元名</th>
-          <th>ページ</th>
-          <th>正解/問題数</th>
-          <th>正答率</th>
-          <th>メモ</th>
-          <th>記録者</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="filters">
+      <div class="form-row">
+        <label for="filter-unit">単元で絞り込み</label>
+        <select id="filter-unit">
+          <option value="">すべて</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="filter-from">期間</label>
+        <div class="date-range">
+          <input type="date" id="filter-from" aria-label="開始日" />
+          <span>〜</span>
+          <input type="date" id="filter-to" aria-label="終了日" />
+          <button type="button" id="filter-clear" class="link">クリア</button>
+        </div>
+      </div>
+    </div>
+    <div id="trend-chart" class="trend-chart" hidden></div>
+    <div class="table-wrap">
+      <table id="records-table">
+        <thead>
+          <tr>
+            <th class="sortable" data-sort-key="date">日付</th>
+            <th class="sortable" data-sort-key="unit">単元名</th>
+            <th class="sortable" data-sort-key="pageNumber">ページ</th>
+            <th>正解/問題数</th>
+            <th class="sortable" data-sort-key="accuracy">正答率</th>
+            <th>メモ</th>
+            <th>記録者</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </section>
 
   <section class="card">
     <h2>単元別の状況</h2>
-    <table id="pages-table">
-      <thead>
-        <tr>
-          <th>No.</th>
-          <th>単元名</th>
-          <th>挑戦回数</th>
-          <th>最終日</th>
-          <th>正答率</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-wrap">
+      <table id="pages-table">
+        <thead>
+          <tr>
+            <th class="sortable" data-sort-key="number">No.</th>
+            <th class="sortable" data-sort-key="title">単元名</th>
+            <th class="sortable" data-sort-key="status">状況</th>
+            <th class="sortable" data-sort-key="attemptCount">挑戦回数</th>
+            <th class="sortable" data-sort-key="lastDate">最終日</th>
+            <th class="sortable" data-sort-key="accuracy">正答率</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </section>
 </main>
 
@@ -97,6 +123,6 @@
   <p>このサービスは家族専用です。許可されたGoogleアカウントでログインしてください。</p>
 </div>
 
-<script type="module" src="app.js?v=20260628a"></script>
+<script type="module" src="app.js?v=20260706a"></script>
 </body>
 </html>
