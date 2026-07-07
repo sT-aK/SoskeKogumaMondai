@@ -2,13 +2,58 @@
   box-sizing: border-box;
 }
 
+html {
+  /* 全体的に文字を小さめにして情報密度を上げる */
+  font-size: 14px;
+}
+
 body {
   font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
-  background: #f5f6f8;
-  color: #222;
+  background: linear-gradient(160deg, #eaf6ef 0%, #d8eee1 45%, #c3e4d1 100%) fixed;
+  color: #1b3a2b;
   margin: 0;
   /* 固定ヘッダー/フッターの分だけ上下に余白を確保する */
-  padding: 72px 16px calc(84px + env(safe-area-inset-bottom));
+  padding: 62px 12px calc(72px + env(safe-area-inset-bottom));
+}
+
+/* 背景の装飾ブロブ（グラスの質感を出すための背後の色面） */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+body::before {
+  width: 55vw;
+  height: 55vw;
+  max-width: 480px;
+  max-height: 480px;
+  top: -10vw;
+  left: -12vw;
+  background: rgba(52, 168, 110, 0.35);
+}
+
+body::after {
+  width: 60vw;
+  height: 60vw;
+  max-width: 520px;
+  max-height: 520px;
+  bottom: -15vw;
+  right: -15vw;
+  background: rgba(20, 133, 130, 0.28);
+}
+
+/* --- グラス共通 --- */
+.card,
+header,
+.tab-bar {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
 }
 
 /* --- 固定ヘッダー --- */
@@ -18,15 +63,15 @@ header {
   left: 0;
   right: 0;
   z-index: 100;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 0 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 4px 24px rgba(23, 77, 52, 0.08);
+  padding: 0 14px;
 }
 
 .header-inner {
   max-width: 900px;
   margin: 0 auto;
-  height: 56px;
+  height: 50px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -35,20 +80,25 @@ header {
 
 h1 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #14532d;
+  letter-spacing: 0.06em;
 }
 
 .auth-area {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: #3d5a4a;
 }
 
 .auth-area img {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 main {
@@ -60,7 +110,7 @@ main {
 .tab-panel {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .tab-panel[hidden] {
@@ -76,83 +126,129 @@ main {
   z-index: 100;
   display: flex;
   justify-content: center;
-  background: #fff;
-  border-top: 1px solid #e3e3e8;
-  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 -4px 24px rgba(23, 77, 52, 0.08);
+  padding: 4px 6px calc(4px + env(safe-area-inset-bottom));
+  gap: 4px;
 }
 
 .tab-bar .tab-btn {
   flex: 1 1 0;
-  max-width: 225px;
+  max-width: 220px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
   background: none;
   border: none;
-  border-radius: 0;
-  color: #888;
-  font-size: 0.72rem;
-  padding: 8px 4px 10px;
+  border-radius: 12px;
+  color: #6f8d7d;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  padding: 6px 4px;
   cursor: pointer;
+  box-shadow: none;
 }
 
 .tab-btn .tab-icon {
-  font-size: 1.3rem;
-  line-height: 1;
+  width: 21px;
+  height: 21px;
 }
 
 .tab-bar .tab-btn.active {
-  color: #2f6fed;
-  font-weight: 600;
+  color: #0e7a4d;
+  font-weight: 700;
+  background: rgba(16, 122, 77, 0.12);
 }
 
+/* --- サマリー --- */
 .summary {
   display: flex;
-  gap: 16px;
+  gap: 6px;
   flex-wrap: wrap;
-  font-size: 0.95rem;
-  color: #555;
+  font-size: 0.72rem;
+  color: #3d5a4a;
 }
 
 .summary span {
-  background: #fff;
-  border-radius: 8px;
-  padding: 6px 12px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 999px;
+  padding: 4px 10px;
 }
 
+/* --- カード --- */
 .card {
-  background: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(23, 77, 52, 0.10);
 }
 
 .card h2 {
-  margin-top: 0;
-  font-size: 1.15rem;
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  color: #14532d;
+  letter-spacing: 0.04em;
 }
 
 .signed-out-card {
   max-width: 900px;
   margin: 40px auto;
   text-align: center;
-  color: #555;
+  color: #3d5a4a;
+  font-size: 0.85rem;
 }
 
-.form-row {
+/* --- カード見出し・注記 --- */
+.card-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.card-header h2 {
+  margin: 0;
+}
+
+.section-note {
+  margin: 0 0 10px;
+  font-size: 0.72rem;
+  color: #6f8d7d;
+}
+
+/* --- 折りたたみセクション（単元を追加など） --- */
+.collapsible summary {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #14532d;
+  cursor: pointer;
+  user-select: none;
+  letter-spacing: 0.04em;
+}
+
+.collapsible[open] summary {
   margin-bottom: 10px;
 }
 
+/* --- フォーム --- */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 .form-row label {
-  width: 90px;
+  width: 84px;
   flex-shrink: 0;
-  font-size: 0.9rem;
-  color: #444;
+  font-size: 0.78rem;
+  color: #3d5a4a;
 }
 
 .form-row input,
@@ -163,9 +259,18 @@ main {
   max-width: 100%;
   width: 100%;
   padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(20, 83, 45, 0.18);
+  border-radius: 9px;
+  font-size: 0.85rem;
+  color: #1b3a2b;
+}
+
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus {
+  outline: 2px solid rgba(16, 122, 77, 0.45);
+  outline-offset: 0;
 }
 
 .form-row textarea {
@@ -174,32 +279,61 @@ main {
 }
 
 .form-actions {
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .form-actions label {
   width: 0;
 }
 
+/* --- 絞り込み・期間 --- */
+.filters {
+  margin-bottom: 10px;
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+}
+
+.date-range input {
+  flex: 0 1 auto;
+  width: auto;
+  padding: 5px 7px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(20, 83, 45, 0.18);
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+/* --- ボタン --- */
 button {
-  background: #2f6fed;
+  background: linear-gradient(135deg, #16a061, #0c7d49);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 8px 18px;
+  border-radius: 10px;
+  padding: 7px 16px;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  box-shadow: 0 3px 10px rgba(12, 125, 73, 0.25);
 }
 
 button.secondary {
-  background: #aaa;
+  background: rgba(109, 141, 125, 0.75);
+  box-shadow: none;
 }
 
 button.link {
   background: none;
-  color: #2f6fed;
+  color: #0e7a4d;
   padding: 2px 6px;
   text-decoration: underline;
+  box-shadow: none;
+  font-size: 0.78rem;
 }
 
 button.link.danger {
@@ -207,90 +341,35 @@ button.link.danger {
 }
 
 .error {
-  color: #d23b3b;
+  color: #c93030;
   min-height: 1.2em;
-  font-size: 0.9rem;
+  font-size: 0.78rem;
+}
+
+/* --- テーブル --- */
+.table-wrap {
+  overflow-x: auto;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.78rem;
 }
 
 th, td {
   text-align: left;
-  padding: 8px 6px;
-  border-bottom: 1px solid #eee;
+  padding: 6px 5px;
+  border-bottom: 1px solid rgba(20, 83, 45, 0.10);
+}
+
+th {
+  color: #3d5a4a;
+  font-size: 0.72rem;
 }
 
 tbody tr:hover {
-  background: #fafbff;
-}
-
-.memo-cell {
-  max-width: 220px;
-  white-space: pre-wrap;
-  word-break: break-word;
-  color: #555;
-}
-
-/* --- カード見出し・注記 --- */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.card-header h2 {
-  margin: 0;
-}
-
-.section-note {
-  margin: 0 0 12px;
-  font-size: 0.85rem;
-  color: #777;
-}
-
-/* --- 折りたたみセクション（単元を追加など） --- */
-.collapsible summary {
-  font-size: 1.15rem;
-  font-weight: 600;
-  cursor: pointer;
-  user-select: none;
-}
-
-.collapsible[open] summary {
-  margin-bottom: 12px;
-}
-
-/* --- 絞り込み・期間 --- */
-.filters {
-  margin-bottom: 12px;
-}
-
-.date-range {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1 1 auto;
-  flex-wrap: wrap;
-}
-
-.date-range input {
-  flex: 0 1 auto;
-  width: auto;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.95rem;
-}
-
-/* --- 横スクロール対応 --- */
-.table-wrap {
-  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.35);
 }
 
 /* --- 並び替え可能なヘッダ --- */
@@ -301,76 +380,84 @@ th.sortable {
 }
 
 th.sortable:hover {
-  color: #2f6fed;
+  color: #0e7a4d;
 }
 
 th.sorted {
-  color: #2f6fed;
+  color: #0e7a4d;
+}
+
+.memo-cell {
+  max-width: 220px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #3d5a4a;
 }
 
 /* --- 正答率の信号色 --- */
-.acc-good { color: #1a7f37; font-weight: 600; }
-.acc-mid  { color: #b8860b; font-weight: 600; }
-.acc-bad  { color: #d23b3b; font-weight: 600; }
+.acc-good { color: #0e7a4d; font-weight: 700; }
+.acc-mid  { color: #ac7c10; font-weight: 700; }
+.acc-bad  { color: #cf3535; font-weight: 700; }
 
 /* --- 単元ステータスのバッジ・行色 --- */
 .status-badge {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 999px;
-  font-size: 0.78rem;
+  font-size: 0.66rem;
   white-space: nowrap;
 }
 
-.status-review   { background: #fdecec; color: #b3261e; }
-.status-untried  { background: #fdf6e3; color: #8a6d0b; }
-.status-progress { background: #eef3ff; color: #2f6fed; }
-.status-mastered { background: #eaf7ee; color: #1a7f37; }
+.status-review   { background: rgba(210, 59, 59, 0.14); color: #b3261e; }
+.status-untried  { background: rgba(172, 124, 16, 0.14); color: #8a6d0b; }
+.status-progress { background: rgba(14, 122, 77, 0.10); color: #0e7a4d; }
+.status-mastered { background: rgba(14, 122, 77, 0.18); color: #0b5c3a; }
 
-tr.unit-review   { background: #fdf4f4; }
-tr.unit-untried  { background: #fdfbf2; }
-tr.unit-review:hover  { background: #fbeaea; }
-tr.unit-untried:hover { background: #fbf6e4; }
+tr.unit-review   { background: rgba(210, 59, 59, 0.06); }
+tr.unit-untried  { background: rgba(172, 124, 16, 0.06); }
+tr.unit-review:hover  { background: rgba(210, 59, 59, 0.10); }
+tr.unit-untried:hover { background: rgba(172, 124, 16, 0.10); }
 
 /* --- 復習おすすめ --- */
 .suggest-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .suggest-chip {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
-  background: #fff;
-  border: 1px solid #e3e3e8;
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   border-left-width: 4px;
-  border-radius: 8px;
-  padding: 8px 12px;
-  color: #222;
+  border-radius: 12px;
+  padding: 7px 11px;
+  color: #1b3a2b;
   text-align: left;
   cursor: pointer;
+  box-shadow: 0 3px 12px rgba(23, 77, 52, 0.08);
 }
 
 .suggest-chip:hover {
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 5px 16px rgba(23, 77, 52, 0.16);
 }
 
-.suggest-chip.unit-review   { border-left-color: #d23b3b; }
+.suggest-chip.unit-review   { border-left-color: #cf3535; }
 .suggest-chip.unit-untried  { border-left-color: #d9a406; }
-.suggest-chip.unit-progress { border-left-color: #2f6fed; }
-.suggest-chip.unit-mastered { border-left-color: #1a7f37; }
+.suggest-chip.unit-progress { border-left-color: #0e7a4d; }
+.suggest-chip.unit-mastered { border-left-color: #0b5c3a; }
 
 .suggest-title {
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 0.85rem;
 }
 
 .suggest-meta {
-  font-size: 0.8rem;
-  color: #777;
+  font-size: 0.68rem;
+  color: #6f8d7d;
 }
 
 /* --- モバイル: 解答記録をカード表示に --- */
@@ -403,16 +490,17 @@ tr.unit-untried:hover { background: #fbf6e4; }
       "score  acc"
       "memo   memo"
       "by     by";
-    gap: 3px 10px;
+    gap: 2px 8px;
     align-items: center;
-    border: 1px solid #e7e8ec;
-    border-radius: 8px;
-    padding: 10px 12px;
-    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
   }
 
   #records-table tbody tr:hover {
-    background: #fff;
+    background: rgba(255, 255, 255, 0.45);
   }
 
   #records-table td {
@@ -426,19 +514,19 @@ tr.unit-untried:hover { background: #fbf6e4; }
 
   #records-table td:nth-child(1) { /* 日付 */
     grid-area: date;
-    color: #777;
-    font-size: 0.8rem;
+    color: #6f8d7d;
+    font-size: 0.7rem;
   }
 
   #records-table td:nth-child(2) { /* 単元名 */
     grid-area: unit;
-    font-weight: 600;
-    font-size: 1rem;
+    font-weight: 700;
+    font-size: 0.9rem;
   }
 
   #records-table td:nth-child(3) { /* ページ */
     grid-area: page;
-    color: #555;
+    color: #3d5a4a;
     text-align: right;
   }
 
@@ -448,29 +536,29 @@ tr.unit-untried:hover { background: #fbf6e4; }
 
   #records-table td:nth-child(4) { /* 正解/問題数 */
     grid-area: score;
-    color: #555;
+    color: #3d5a4a;
   }
 
   #records-table td:nth-child(5) { /* 正答率 */
     grid-area: acc;
     text-align: right;
-    font-size: 1.05rem;
+    font-size: 0.95rem;
   }
 
   #records-table td:nth-child(6) { /* メモ */
     grid-area: memo;
     max-width: none;
-    margin-top: 4px;
-    background: #f7f8fa;
-    border-radius: 6px;
-    padding: 6px 8px;
-    font-size: 0.85rem;
+    margin-top: 3px;
+    background: rgba(20, 83, 45, 0.06);
+    border-radius: 8px;
+    padding: 5px 7px;
+    font-size: 0.75rem;
   }
 
   #records-table td:nth-child(7) { /* 記録者 */
     grid-area: by;
-    color: #aaa;
-    font-size: 0.75rem;
+    color: #93a99c;
+    font-size: 0.66rem;
   }
 
   #records-table td:nth-child(8) { /* 編集/削除 */
@@ -482,16 +570,16 @@ tr.unit-untried:hover { background: #fbf6e4; }
 
 /* --- 正答率の推移グラフ --- */
 .trend-chart {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .trend-svg {
   width: 100%;
   height: auto;
-  max-height: 200px;
+  max-height: 180px;
 }
 
-.trend-grid { stroke: #eee; stroke-width: 1; }
-.trend-axis { fill: #999; font-size: 11px; }
-.trend-line { fill: none; stroke: #2f6fed; stroke-width: 2; }
-.trend-dot  { fill: #2f6fed; }
+.trend-grid { stroke: rgba(20, 83, 45, 0.12); stroke-width: 1; }
+.trend-axis { fill: #6f8d7d; font-size: 10px; }
+.trend-line { fill: none; stroke: #0e7a4d; stroke-width: 2; }
+.trend-dot  { fill: #0e7a4d; }
