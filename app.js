@@ -18,15 +18,30 @@ import {
   orderBy,
   serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
-import { firebaseConfig } from './firebase-config.js?v=20260707b';
-import { PAGES } from './pages-data.js?v=20260707b';
+import { firebaseConfig } from './firebase-config.js?v=20260707c';
+import { PAGES } from './pages-data.js?v=20260707c';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-const PAGES_BY_NUMBER = new Map(PAGES.map((p) => [p.number, p]));
+// 単元マスタ: pages-data.js の組み込みリストに、Firestoreの units コレクションで
+// 追加された単元をマージして使う（番号が重複した場合は組み込み側を優先）。
+let allUnits = [...PAGES].sort((a, b) => a.number - b.number);
+let unitsByNumber = new Map(allUnits.map((p) => [p.number, p]));
+
+function rebuildUnits(customUnits) {
+  const merged = new Map(PAGES.map((p) => [p.number, p]));
+  for (const u of customUnits) {
+    if (!merged.has(u.number)) {
+      merged.set(u.number, { number: u.number, title: u.title });
+    }
+  }
+  allUnits = [...merged.values()].sort((a, b) => a.number - b.number);
+  unitsByNumber = merged;
+  populateUnitSelects();
+}
 
 const authArea = document.getElementById('auth-area');
 const appRoot = document.getElementById('app');
@@ -56,6 +71,10 @@ const pagesTableHead = document.querySelector('#pages-table thead');
 const summaryEl = document.getElementById('summary');
 const reviewSuggestSection = document.getElementById('review-suggest');
 const reviewSuggestList = document.getElementById('review-suggest-list');
+const unitForm = document.getElementById('unit-form');
+const newUnitNumberInput = document.getElementById('new-unit-number');
+const newUnitTitleInput = document.getElementById('new-unit-title');
+const unitFormError = document.getElementById('unit-form-error');
 
 let unsubscribeRecords = null;
 let allRecords = [];
@@ -113,7 +132,7 @@ function populateUnitSelects() {
     while (select.options.length > (select === filterUnitSelect ? 1 : 0)) {
       select.remove(select.options.length - 1);
     }
-    for (const page of PAGES) {
+    for (const page of allUnits) {
       const opt = document.createElement('option');
       opt.value = String(page.number);
       opt.textContent = `${page.number}　${page.title}`;
@@ -179,7 +198,7 @@ function validateForm() {
   const correctCount = Number(correctInput.value);
 
   if (!date) return '日付を指定してください。';
-  if (!PAGES_BY_NUMBER.has(unitNumber)) return '単元名を指定してください。';
+  if (!unitsByNumber.has(unitNumber)) return '単元名を指定してください。';
   if (!Number.isInteger(pageNumber) || pageNumber <= 0) {
     return 'ページは1以上の整数で指定してください。';
   }
@@ -230,6 +249,48 @@ form.addEventListener('submit', async (e) => {
 });
 
 cancelEditBtn.addEventListener('click', resetForm);
+
+// 単元の追加。Firestoreの units コレクションに保存し、
+// onSnapshot経由でプルダウン・単元別の状況に自動反映される。
+unitForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const number = Number(newUnitNumberInput.value);
+  const title = newUnitTitleInput.value.trim();
+
+  if (!Number.isInteger(number) || number <= 0) {
+    unitFormError.textContent = 'No.は1以上の整数で指定してください。';
+    return;
+  }
+  if (unitsByNumber.has(number)) {
+    const existing = unitsByNumber.get(number);
+    unitFormError.textContent = `No.${number} は既に「${existing.title}」で使われています。`;
+    return;
+  }
+  if (!title) {
+    unitFormError.textContent = '単元名を入力してください。';
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, 'units'), {
+      number,
+      title,
+      createdByEmail: currentUser.email,
+      createdAt: serverTimestamp(),
+    });
+    unitForm.reset();
+    unitFormError.textContent = '';
+    // 追加した単元を記録フォームで選択済みにしておく。
+    unitSelect.value = String(number);
+  } catch (err) {
+    if (err.code === 'permission-denied') {
+      unitFormError.textContent =
+        '保存できませんでした。Firestoreのセキュリティルールに units コレクションの許可を追加してください（firestore.rules 参照）。';
+    } else {
+      unitFormError.textContent = `保存に失敗しました: ${err.message}`;
+    }
+  }
+});
 
 filterUnitSelect.addEventListener('change', renderRecords);
 filterFromInput.addEventListener('change', renderRecords);
@@ -291,7 +352,7 @@ function exportRecordsCsv() {
   const lines = [header.map(csvField).join(',')];
   for (const r of rows) {
     const unitNumber = r.unitNumber ?? r.pageNumber;
-    const unit = PAGES_BY_NUMBER.get(unitNumber);
+    const unit = unitsByNumber.get(unitNumber);
     const accuracy = recordAccuracy(r);
     lines.push([
       r.date,
@@ -354,8 +415,8 @@ function sortRecords(records) {
     let av;
     let bv;
     if (key === 'unit') {
-      av = (PAGES_BY_NUMBER.get(a.unitNumber ?? a.pageNumber) || {}).title || '';
-      bv = (PAGES_BY_NUMBER.get(b.unitNumber ?? b.pageNumber) || {}).title || '';
+      av = (unitsByNumber.get(a.unitNumber ?? a.pageNumber) || {}).title || '';
+      bv = (unitsByNumber.get(b.unitNumber ?? b.pageNumber) || {}).title || '';
       return av.localeCompare(bv, 'ja') * factor;
     }
     if (key === 'accuracy') {
@@ -387,7 +448,7 @@ function renderRecords() {
   recordsTableBody.innerHTML = '';
   for (const record of rows) {
     const unitNumber = record.unitNumber ?? record.pageNumber;
-    const unit = PAGES_BY_NUMBER.get(unitNumber);
+    const unit = unitsByNumber.get(unitNumber);
     const accuracy = recordAccuracy(record);
 
     const tr = document.createElement('tr');
@@ -540,7 +601,7 @@ function sortUnitRows(rows) {
 }
 
 function renderUnitsTable() {
-  const rows = PAGES.map((unit) => {
+  const rows = allUnits.map((unit) => {
     const stats = computeUnitStats(unit.number);
     return {
       number: unit.number,
@@ -645,7 +706,7 @@ function renderSummary() {
 
   summaryEl.innerHTML = '';
   const items = [
-    `全${PAGES.length}単元中 ${attemptedUnits}単元に挑戦済み`,
+    `全${allUnits.length}単元中 ${attemptedUnits}単元に挑戦済み`,
     `合計挑戦回数: ${attemptCount}回`,
     `全体正答率: ${overallAccuracy === null ? '-' : overallAccuracy + '%'}`,
     `連続学習: ${streak > 0 ? streak + '日' : '記録なし'}`,
@@ -661,7 +722,7 @@ function renderSummary() {
 // 復習おすすめ: 習得済みを除き、正答率の低さと最終日からの経過日数でスコア化して上位を表示。
 function renderReviewSuggest() {
   const today = new Date();
-  const scored = PAGES.map((unit) => {
+  const scored = allUnits.map((unit) => {
     const stats = computeUnitStats(unit.number);
     const status = unitStatus(stats);
     let score;
@@ -714,6 +775,27 @@ function renderReviewSuggest() {
   }
 }
 
+let unsubscribeUnits = null;
+
+function subscribeToUnits() {
+  if (unsubscribeUnits) {
+    unsubscribeUnits();
+    unsubscribeUnits = null;
+  }
+  const q = query(collection(db, 'units'), orderBy('number'));
+  unsubscribeUnits = onSnapshot(
+    q,
+    (snapshot) => {
+      rebuildUnits(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+      renderRecords();
+    },
+    (err) => {
+      // ルール未更新などで units を読めない場合でも、組み込みの単元だけで動作を続ける。
+      console.error('追加単元の取得に失敗しました:', err);
+    }
+  );
+}
+
 function subscribeToRecords() {
   if (unsubscribeRecords) {
     unsubscribeRecords();
@@ -748,6 +830,7 @@ onAuthStateChanged(auth, (user) => {
     // 権限があるかどうかはFirestoreへの最初のアクセスで判定する（subscribeToRecords内のonSnapshotエラー参照）。
     signedOutCard.hidden = true;
     subscribeToRecords();
+    subscribeToUnits();
   } else {
     appRoot.hidden = true;
     signedOutCard.hidden = false;
@@ -755,7 +838,12 @@ onAuthStateChanged(auth, (user) => {
       unsubscribeRecords();
       unsubscribeRecords = null;
     }
+    if (unsubscribeUnits) {
+      unsubscribeUnits();
+      unsubscribeUnits = null;
+    }
     allRecords = [];
+    rebuildUnits([]);
   }
 });
 
