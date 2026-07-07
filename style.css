@@ -7,23 +7,35 @@ body {
   background: #f5f6f8;
   color: #222;
   margin: 0;
-  padding: 0 16px 40px;
+  /* 固定ヘッダー/フッターの分だけ上下に余白を確保する */
+  padding: 72px 16px calc(84px + env(safe-area-inset-bottom));
 }
 
+/* --- 固定ヘッダー --- */
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 0 16px;
+}
+
+.header-inner {
   max-width: 900px;
   margin: 0 auto;
-  padding: 24px 0 8px;
+  height: 56px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
   gap: 12px;
 }
 
 h1 {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: 1.25rem;
 }
 
 .auth-area {
@@ -42,9 +54,57 @@ h1 {
 main {
   max-width: 900px;
   margin: 0 auto;
+}
+
+/* --- タブパネル --- */
+.tab-panel {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.tab-panel[hidden] {
+  display: none;
+}
+
+/* --- 固定フッター（タブバー） --- */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  background: #fff;
+  border-top: 1px solid #e3e3e8;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab-bar .tab-btn {
+  flex: 1 1 0;
+  max-width: 225px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  color: #888;
+  font-size: 0.72rem;
+  padding: 8px 4px 10px;
+  cursor: pointer;
+}
+
+.tab-btn .tab-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.tab-bar .tab-btn.active {
+  color: #2f6fed;
+  font-weight: 600;
 }
 
 .summary {
@@ -320,6 +380,11 @@ tr.unit-untried:hover { background: #fbf6e4; }
 }
 
 @media (max-width: 600px) {
+  /* 固定ヘッダーを1行に収めるため、ユーザー名は省略しアイコンとログアウトのみ表示 */
+  .auth-area > span {
+    display: none;
+  }
+
   #records-table thead {
     display: none;
   }

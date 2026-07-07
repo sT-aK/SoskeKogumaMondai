@@ -18,8 +18,8 @@ import {
   orderBy,
   serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
-import { firebaseConfig } from './firebase-config.js?v=20260707d';
-import { PAGES } from './pages-data.js?v=20260707d';
+import { firebaseConfig } from './firebase-config.js?v=20260707e';
+import { PAGES } from './pages-data.js?v=20260707e';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -76,6 +76,24 @@ const unitForm = document.getElementById('unit-form');
 const newUnitNumberInput = document.getElementById('new-unit-number');
 const newUnitTitleInput = document.getElementById('new-unit-title');
 const unitFormError = document.getElementById('unit-form-error');
+const tabBar = document.getElementById('tab-bar');
+const tabPanels = document.querySelectorAll('.tab-panel');
+
+// フッターのタブでエリアを切り替える。
+function switchTab(name) {
+  for (const panel of tabPanels) {
+    panel.hidden = panel.dataset.tabPanel !== name;
+  }
+  for (const btn of tabBar.querySelectorAll('.tab-btn')) {
+    btn.classList.toggle('active', btn.dataset.tab === name);
+  }
+  window.scrollTo({ top: 0 });
+}
+
+tabBar.addEventListener('click', (e) => {
+  const btn = e.target.closest('.tab-btn');
+  if (btn) switchTab(btn.dataset.tab);
+});
 
 let unsubscribeRecords = null;
 let allRecords = [];
@@ -188,7 +206,8 @@ function startEdit(record) {
   submitBtn.textContent = '更新';
   cancelEditBtn.hidden = false;
   formError.textContent = '';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // 編集フォームは「記録する」タブにあるので切り替える。
+  switchTab('input');
 }
 
 function validateForm() {
@@ -791,12 +810,12 @@ function renderReviewSuggest() {
     meta.textContent = `${item.status}・正答率 ${acc}・${last}`;
 
     chip.append(title, meta);
-    // クリックでこの単元を絞り込み表示し、追加フォームの単元も合わせる。
+    // クリックでこの単元に絞り込んだ解答記録タブへ移動し、追加フォームの単元も合わせる。
     chip.addEventListener('click', () => {
       filterUnitSelect.value = String(item.unit.number);
       unitSelect.value = String(item.unit.number);
       renderRecords();
-      document.getElementById('records-table').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      switchTab('records');
     });
     reviewSuggestList.appendChild(chip);
   }
@@ -833,6 +852,7 @@ function subscribeToRecords() {
     q,
     (snapshot) => {
       appRoot.hidden = false;
+      tabBar.hidden = false;
       signedOutCard.hidden = true;
       allRecords = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
       renderRecords();
@@ -860,6 +880,7 @@ onAuthStateChanged(auth, (user) => {
     subscribeToUnits();
   } else {
     appRoot.hidden = true;
+    tabBar.hidden = true;
     signedOutCard.hidden = false;
     if (unsubscribeRecords) {
       unsubscribeRecords();
