@@ -18,8 +18,8 @@ import {
   orderBy,
   serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
-import { firebaseConfig } from './firebase-config.js?v=20260706a';
-import { PAGES } from './pages-data.js?v=20260706a';
+import { firebaseConfig } from './firebase-config.js?v=20260707a';
+import { PAGES } from './pages-data.js?v=20260707a';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -316,13 +316,6 @@ function exportRecordsCsv() {
   a.remove();
   URL.revokeObjectURL(url);
 }
-
-// 単元を選んだとき、ページ欄が空ならその単元の開始ページを初期値として補完する。
-unitSelect.addEventListener('change', () => {
-  if (!pageNumberInput.value) {
-    pageNumberInput.value = unitSelect.value;
-  }
-});
 
 async function deleteRecord(id) {
   if (!confirm('この記録を削除しますか？')) return;
