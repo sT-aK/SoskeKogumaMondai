@@ -301,6 +301,108 @@ tr.unit-untried:hover { background: #fbf6e4; }
   color: #777;
 }
 
+/* --- モバイル: 解答記録をカード表示に --- */
+/* 単元別テーブルは最小幅を確保し、狭い画面では横スクロールで見る。 */
+#pages-table {
+  min-width: 540px;
+}
+
+@media (max-width: 600px) {
+  #records-table thead {
+    display: none;
+  }
+
+  #records-table,
+  #records-table tbody {
+    display: block;
+  }
+
+  #records-table tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "date   actions"
+      "unit   page"
+      "score  acc"
+      "memo   memo"
+      "by     by";
+    gap: 3px 10px;
+    align-items: center;
+    border: 1px solid #e7e8ec;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+
+  #records-table tbody tr:hover {
+    background: #fff;
+  }
+
+  #records-table td {
+    border-bottom: none;
+    padding: 0;
+  }
+
+  #records-table td:empty {
+    display: none;
+  }
+
+  #records-table td:nth-child(1) { /* 日付 */
+    grid-area: date;
+    color: #777;
+    font-size: 0.8rem;
+  }
+
+  #records-table td:nth-child(2) { /* 単元名 */
+    grid-area: unit;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  #records-table td:nth-child(3) { /* ページ */
+    grid-area: page;
+    color: #555;
+    text-align: right;
+  }
+
+  #records-table td:nth-child(3)::before {
+    content: "P.";
+  }
+
+  #records-table td:nth-child(4) { /* 正解/問題数 */
+    grid-area: score;
+    color: #555;
+  }
+
+  #records-table td:nth-child(5) { /* 正答率 */
+    grid-area: acc;
+    text-align: right;
+    font-size: 1.05rem;
+  }
+
+  #records-table td:nth-child(6) { /* メモ */
+    grid-area: memo;
+    max-width: none;
+    margin-top: 4px;
+    background: #f7f8fa;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 0.85rem;
+  }
+
+  #records-table td:nth-child(7) { /* 記録者 */
+    grid-area: by;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+
+  #records-table td:nth-child(8) { /* 編集/削除 */
+    grid-area: actions;
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
 /* --- 正答率の推移グラフ --- */
 .trend-chart {
   margin-bottom: 12px;
