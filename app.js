@@ -18,8 +18,8 @@ import {
   orderBy,
   serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
-import { firebaseConfig } from './firebase-config.js?v=20260707c';
-import { PAGES } from './pages-data.js?v=20260707c';
+import { firebaseConfig } from './firebase-config.js?v=20260707d';
+import { PAGES } from './pages-data.js?v=20260707d';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -35,7 +35,8 @@ function rebuildUnits(customUnits) {
   const merged = new Map(PAGES.map((p) => [p.number, p]));
   for (const u of customUnits) {
     if (!merged.has(u.number)) {
-      merged.set(u.number, { number: u.number, title: u.title });
+      // id を保持しておくと、画面から削除できる（組み込み単元には id がない）。
+      merged.set(u.number, { number: u.number, title: u.title, id: u.id });
     }
   }
   allUnits = [...merged.values()].sort((a, b) => a.number - b.number);
@@ -387,6 +388,21 @@ async function deleteRecord(id) {
   }
 }
 
+// 画面から追加した単元を削除する（組み込み単元は id を持たないため削除不可）。
+async function deleteUnit(unit) {
+  const stats = computeUnitStats(unit.number);
+  let message = `追加した単元「${unit.title}」を削除しますか？`;
+  if (stats.attemptCount > 0) {
+    message += `\n\nこの単元には解答記録が${stats.attemptCount}件あります。削除しても記録自体は残りますが、単元名は「(不明な単元)」と表示されるようになります。`;
+  }
+  if (!confirm(message)) return;
+  try {
+    await deleteDoc(doc(db, 'units', unit.id));
+  } catch (err) {
+    alert(`削除に失敗しました: ${err.message}`);
+  }
+}
+
 function recordAccuracy(record) {
   return record.totalCount > 0
     ? Math.round((record.correctCount / record.totalCount) * 1000) / 10
@@ -606,6 +622,7 @@ function renderUnitsTable() {
     return {
       number: unit.number,
       title: unit.title,
+      id: unit.id, // 追加単元のみ Firestore の id を持つ
       status: unitStatus(stats),
       attemptCount: stats.attemptCount,
       lastDate: stats.lastDate,
@@ -635,7 +652,17 @@ function renderUnitsTable() {
     tdAccuracy.textContent = row.accuracy === null ? '-' : `${row.accuracy}%`;
     tdAccuracy.className = accuracyClass(row.accuracy);
 
-    tr.append(tdNumber, tdTitle, tdStatus, tdAttempts, tdLastDate, tdAccuracy);
+    // 追加した単元だけ削除ボタンを表示する。
+    const tdActions = document.createElement('td');
+    if (row.id) {
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'link danger';
+      deleteBtn.textContent = '削除';
+      deleteBtn.addEventListener('click', () => deleteUnit(row));
+      tdActions.appendChild(deleteBtn);
+    }
+
+    tr.append(tdNumber, tdTitle, tdStatus, tdAttempts, tdLastDate, tdAccuracy, tdActions);
     pagesTableBody.appendChild(tr);
   }
 
