@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>問題管理</title>
-<link rel="stylesheet" href="style.css?v=20260707e" />
+<link rel="stylesheet" href="style.css?v=20260707f" />
 </head>
 <body>
 <header>
@@ -62,26 +62,6 @@
       </form>
     </section>
 
-    <section class="card">
-      <details class="collapsible">
-        <summary>単元を追加</summary>
-        <p class="section-note">問題集にない単元を追加できます。No.には他の単元と重ならない番号（そのページ番号など）を指定してください。</p>
-        <form id="unit-form">
-          <div class="form-row">
-            <label for="new-unit-number">No.</label>
-            <input type="number" id="new-unit-number" min="1" required />
-          </div>
-          <div class="form-row">
-            <label for="new-unit-title">単元名</label>
-            <input type="text" id="new-unit-title" maxlength="50" required />
-          </div>
-          <div class="form-row form-actions">
-            <button type="submit">単元を追加</button>
-          </div>
-          <p id="unit-form-error" class="error"></p>
-        </form>
-      </details>
-    </section>
   </div>
 
   <div class="tab-panel" data-tab-panel="records" hidden>
@@ -130,6 +110,27 @@
 
   <div class="tab-panel" data-tab-panel="units" hidden>
     <section class="card">
+      <details class="collapsible">
+        <summary>単元を追加</summary>
+        <p class="section-note">問題集にない単元を追加できます。No.には他の単元と重ならない番号（そのページ番号など）を指定してください。</p>
+        <form id="unit-form">
+          <div class="form-row">
+            <label for="new-unit-number">No.</label>
+            <input type="number" id="new-unit-number" min="1" required />
+          </div>
+          <div class="form-row">
+            <label for="new-unit-title">単元名</label>
+            <input type="text" id="new-unit-title" maxlength="50" required />
+          </div>
+          <div class="form-row form-actions">
+            <button type="submit">単元を追加</button>
+          </div>
+          <p id="unit-form-error" class="error"></p>
+        </form>
+      </details>
+    </section>
+
+    <section class="card">
       <h2>単元別の状況</h2>
       <div class="table-wrap">
         <table id="pages-table">
@@ -162,6 +163,6 @@
   <button type="button" class="tab-btn" data-tab="units"><span class="tab-icon">📚</span>単元</button>
 </nav>
 
-<script type="module" src="app.js?v=20260707e"></script>
+<script type="module" src="app.js?v=20260707f"></script>
 </body>
 </html>
